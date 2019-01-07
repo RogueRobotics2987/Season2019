@@ -1,2 +1,5 @@
 # Season2019-20
-All robot code for the 2019-20 season robot
+# ACTUALLY READ ME
+
+
+# How to setup your laptop to use this GitHub Repository
