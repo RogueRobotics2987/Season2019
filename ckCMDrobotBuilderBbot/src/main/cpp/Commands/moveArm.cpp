@@ -35,7 +35,7 @@ void moveArm::Execute() {
 
 // Make this return true when this Command no longer needs to run execute()
 bool moveArm::IsFinished() {
-    return Robot::arm->OnTarget();
+    return false;
 }
 
 // Called once after isFinished returns true
