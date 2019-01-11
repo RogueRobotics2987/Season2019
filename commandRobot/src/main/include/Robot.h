@@ -13,6 +13,7 @@
 
 #include "OI.h"
 #include "commands/ExampleCommand.h"
+#include "commands/jCommands.h"
 #include "commands/MyAutoCommand.h"
 #include "subsystems/ExampleSubsystem.h"
 
