@@ -27,7 +27,7 @@ void driveWithJoystick::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void driveWithJoystick::Execute() {
-    Robot::drivetrain->differentialDrive1->ArcadeDrive(Robot::oi->getJoystick1()->GetY(), Robot::oi->getJoystick1()->GetZ());
+    Robot::drivetrain->differentialDrive1->ArcadeDrive(-Robot::oi->getJoystick1()->GetY(), Robot::oi->getJoystick1()->GetZ());
 }
 
 // Make this return true when this Command no longer needs to run execute()
