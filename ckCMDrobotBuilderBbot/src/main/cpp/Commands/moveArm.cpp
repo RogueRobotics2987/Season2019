@@ -30,22 +30,25 @@ void moveArm::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void moveArm::Execute() {
-    while (m_button->Get()){
+    if (m_button->Get()){
         Robot::arm->armMotor->Set(m_speed);
+        localFinishFlag = false;
+    } else {
+        Robot::arm->armMotor->Set(m_speed);
+        localFinishFlag = true;
     }
-    Cancel();
+    // Cancel();
     // std::cout<<"i am in execute";
 }
 
 // Make this return true when this Command no longer needs to run execute()
 bool moveArm::IsFinished() {
-    Robot::arm->armMotor->Set(0);
-    return false;
+    return localFinishFlag;
 }
 
 // Called once after isFinished returns true
 void moveArm::End() {
-
+    Robot::arm->armMotor->Set(0);
 }
 
 // Called when another command which requires one or more of the same
