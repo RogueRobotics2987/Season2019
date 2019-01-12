@@ -24,12 +24,18 @@ moveFinger::moveFinger(double angleFromGround): frc::Command() {
 
 // Called just before this Command runs the first time
 void moveFinger::Initialize() {
-    Robot::finger->SetSetpoint(m_angleFromGround);
+    // Robot::finger->Enable();
+    
 
 }
 
 // Called repeatedly when this Command is scheduled to run
 void moveFinger::Execute() {
+    double motorOutput;
+    motorOutput = -(Robot::finger->ReturnPIDInput()/1000);
+    
+
+    Robot::finger->UsePIDOutput(motorOutput);
 
 }
 
