@@ -6,16 +6,21 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Commands/liftAndTake.h"
-#include "Commands/takeBall.h"
-#include "Commands/moveArm.h"
+#include "Commands/lift.h"
+#include "Commands/take.h"
+#include "Commands/finger.h"
+
 
 liftAndTake::liftAndTake() {
   // Add Commands here:
   // e.g. AddSequential(new Command1());
   //      AddSequential(new Command2());
   // these will run in order.
-            // AddParallel(new moveArm());
-            // AddSequential(new takeBall());
+  // AddSequential(new lift(1.0, 0.5));
+  // AddSequential(new take(1.0, 0.5));
+   AddSequential(new finger(1.0, -0.5));
+  // AddSequential(new lift(0.5, -0.5));
+
   // To run multiple commands at the same time,
   // use AddParallel()
   // e.g. AddParallel(new Command1());

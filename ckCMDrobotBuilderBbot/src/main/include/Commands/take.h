@@ -10,9 +10,9 @@
 #include <frc/commands/Command.h>
 #include "Robot.h"
 
-class lift : public frc::Command {
+class take : public frc::Command {
  public:
-  lift(double duration, double speed);
+  take(double duration, double speed);
   void Initialize() override;
   void Execute() override;
   bool IsFinished() override;
@@ -20,5 +20,4 @@ class lift : public frc::Command {
   void Interrupted() override;
 private:
   double mySpeed;
-
 };

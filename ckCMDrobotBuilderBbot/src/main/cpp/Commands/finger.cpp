@@ -5,39 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "Commands/lift.h"
+#include "Commands/finger.h"
 
-lift::lift(double duration, double speed) {
+finger::finger(double duration, double speed) {
   // Use Requires() here to declare subsystem dependencies
   // eg. Requires(Robot::chassis.get());
-  Requires(Robot::arm.get());
+  Requires(Robot::finger.get());
   SetTimeout(duration);
   mySpeed = speed;
 }
 
 // Called just before this Command runs the first time
-void lift::Initialize() {
-}
+void finger::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void lift::Execute() {
-  // Robot::arm->armMotor(-1.0);
-  Robot::arm->armMotor->Set(mySpeed);
+void finger::Execute() {
+  Robot::finger->fingerMotor->Set(mySpeed);
 }
 
 // Make this return true when this Command no longer needs to run execute()
-bool lift::IsFinished() { 
-  return IsTimedOut();
-}
+bool finger::IsFinished() { 
+  return IsTimedOut(); 
+  }
 
 // Called once after isFinished returns true
-void lift::End() {
-   Robot::arm->armMotor->Set(0);
-
+void finger::End() {
+  Robot::finger->fingerMotor->Set(0);
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
-void lift::Interrupted() {
-   End();
+void finger::Interrupted() {
+  End();
 }

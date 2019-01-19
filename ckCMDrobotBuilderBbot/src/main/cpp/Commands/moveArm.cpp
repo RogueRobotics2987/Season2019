@@ -55,6 +55,5 @@ void moveArm::End() {
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void moveArm::Interrupted() {
-    Robot::arm->armMotor->Set(0);
-
+    End();
 }

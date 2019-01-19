@@ -11,5 +11,5 @@
 
 class liftAndTake : public frc::CommandGroup {
  public:
-  liftAndTake();
+ liftAndTake();
 };
