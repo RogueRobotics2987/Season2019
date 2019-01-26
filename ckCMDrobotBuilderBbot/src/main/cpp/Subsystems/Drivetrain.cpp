@@ -47,4 +47,11 @@ void Drivetrain::Periodic() {
 
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
+void sydsCmd(double speed, double rotation){
+    if(autoDrive == true){
+        Robot::drivetrain->differentialDrive1->ArcadeDrive(0.0, 0.0);
+    }else{
+        Robot::drivetrain->differentialDrive1->ArcadeDrive(speed, rotation);
+    }
 
+}
