@@ -7,15 +7,9 @@
 
 #pragma once
 
-#include <frc/commands/Command.h>
-#include "Robot.h"
+#include <frc/commands/CommandGroup.h>
 
-class driveForward : public frc::Command {
+class snakeFLFRF : public frc::CommandGroup {
  public:
-  driveForward();
-  void Initialize() override;
-  void Execute() override;
-  bool IsFinished() override;
-  void End() override;
-  void Interrupted() override;
+  snakeFLFRF();
 };

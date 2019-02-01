@@ -5,29 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "Commands/driveForward.h"
+#include "Commands/autoTurnLeft.h"
 
-driveForward::driveForward() {
+autoTurnLeft::autoTurnLeft(double duration, double rotation) {
   // Use Requires() here to declare subsystem dependencies
   // eg. Requires(Robot::chassis.get());
-  Requires(Robot::drivetrain.get());
+  Requires(Robot::driveTrain.get());
+  SetTimeout(duration);
+  myRotation = rotation;
 }
 
 // Called just before this Command runs the first time
-void driveForward::Initialize() {}
+void autoTurnLeft::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void driveForward::Execute() {
-  Robot::drivetrain->differentialDrive1->ArcadeDrive(1.0, 0.0, 0.0);
-
+void autoTurnLeft::Execute() {
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, myRotation, 0.0);
 }
 
 // Make this return true when this Command no longer needs to run execute()
-bool driveForward::IsFinished() { return false; }
+bool autoTurnLeft::IsFinished() { 
+  return IsTimedOut(); 
+}
 
 // Called once after isFinished returns true
-void driveForward::End() {}
+void autoTurnLeft::End() {
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, 0.0, 0.0);
+}
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
-void driveForward::Interrupted() {}
+void autoTurnLeft::Interrupted() {
+  End();
+}

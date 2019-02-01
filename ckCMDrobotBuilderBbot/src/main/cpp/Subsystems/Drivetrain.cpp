@@ -51,7 +51,6 @@ void Drivetrain::sydsCmd(double speed, double rotation){
     if(autoDrive == true){
         differentialDrive1->ArcadeDrive(0.0,0.0);
     }else{
-  //      Robot::drivetrain->differentialDrive1->ArcadeDrive(speed, rotation);
         differentialDrive1->ArcadeDrive(speed, rotation);
     }
 

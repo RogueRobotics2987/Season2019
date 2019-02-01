@@ -10,12 +10,14 @@
 #include <frc/commands/Command.h>
 #include "Robot.h"
 
-class driveForward : public frc::Command {
+class autoTurnLeft : public frc::Command {
  public:
-  driveForward();
+  autoTurnLeft(double duration, double rotation);
   void Initialize() override;
   void Execute() override;
   bool IsFinished() override;
   void End() override;
   void Interrupted() override;
+private:
+  double myRotation;
 };

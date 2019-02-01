@@ -5,29 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "Commands/driveForward.h"
+#include "Commands/autoDriveForward.h"
 
-driveForward::driveForward() {
+autoDriveForward::autoDriveForward(double duration, double speed) {
   // Use Requires() here to declare subsystem dependencies
   // eg. Requires(Robot::chassis.get());
-  Requires(Robot::drivetrain.get());
+  Requires(Robot::driveTrain.get());
+  SetTimeout(duration);
+  mySpeed = speed;
 }
 
 // Called just before this Command runs the first time
-void driveForward::Initialize() {}
+void autoDriveForward::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void driveForward::Execute() {
-  Robot::drivetrain->differentialDrive1->ArcadeDrive(1.0, 0.0, 0.0);
-
+void autoDriveForward::Execute() {
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(mySpeed, 0.0, 0.0);
 }
 
 // Make this return true when this Command no longer needs to run execute()
-bool driveForward::IsFinished() { return false; }
+bool autoDriveForward::IsFinished() {
+  return IsTimedOut(); 
+}
 
 // Called once after isFinished returns true
-void driveForward::End() {}
+void autoDriveForward::End() {
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, 0.0, 0.0);
+}
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
-void driveForward::Interrupted() {}
+void autoDriveForward::Interrupted() {
+  End();
+}
