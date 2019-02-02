@@ -20,7 +20,7 @@ void autoTurnRight::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
 void autoTurnRight::Execute() {
-  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, myRotation, 0.0);
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, myRotation, false);
 }
 
 // Make this return true when this Command no longer needs to run execute()
@@ -30,7 +30,7 @@ bool autoTurnRight::IsFinished() {
 
 // Called once after isFinished returns true
 void autoTurnRight::End() {
-  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, 0.0, 0.0);
+  Robot::driveTrain->differentialDrive1->ArcadeDrive(0.0, 0.0, false);
 }
 
 // Called when another command which requires one or more of the same
