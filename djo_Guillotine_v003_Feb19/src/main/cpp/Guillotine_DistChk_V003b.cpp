@@ -103,7 +103,7 @@ public:
 
 		winchChannel.SetSelectedSensorPosition(absPos, 0, 10);
 //		absPos = winchChannel.GetSelectedSensorPosition(kPIDLoopIdx) & 0xFFF;
-
+//
 //
 //		winchChannel.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, kPIDLoopIdx,
 //				kTimeoutMs);
