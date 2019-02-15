@@ -4,18 +4,13 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
-#include "ahrs.h"
-#include "Robot.h"
-#include <WPILib.h> 
-#include <iostream>
-#include "ctre/Phoenix.h"
-#include <frc/wpilib.h> 
-#include <frc/smartdashboard/SmartDashboard.h>
-frc::Joystick stick{0}; 
-frc::Solenoid solenoid{0}; 
-frc::Solenoid solenoid2{3}; 
 
-frc::Compressor *c = new frc::Compressor(0); 
+#include "Robot.h"
+#include "ctre/Phoenix.h"
+#include <iostream>
+
+#include <frc/smartdashboard/SmartDashboard.h>
+WPI_TalonSRX* talon_foot; 
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -31,7 +26,7 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {}
-//
+
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -45,8 +40,8 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
   m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString(
-  //     "Auto Selector", kAutoNameDefault);
+  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
+  //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
 
   if (m_autoSelected == kAutoNameCustom) {
@@ -64,29 +59,20 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  talon_foot = new WPI_TalonSRX(17); 
+}
 
 void Robot::TeleopPeriodic() {
 
-  c->SetClosedLoopControl(true); 
-  if(stick.GetRawButton(1)){ 
-    solenoid.Set(true); 
-  }
-  else if(!stick.GetRawButton(1)){ 
-    solenoid.Set(false); 
-  }
-  if(stick.GetRawButton(3)){ 
-    solenoid2.Set(true); 
-  }
-  else if(!stick.GetRawButton(3)){ 
-    solenoid2.Set(false); 
-  }
-  
-  frc::SmartDashboard::PutBoolean("Compressor Enabled", c->Enabled());
-  frc::SmartDashboard::PutNumber("Compressor Current", c->GetCompressorCurrent()); 
+  talon_foot->Set(.5);
+  frc::SmartDashboard::PutNumber("Talon voltage", talon_foot->GetBusVoltage()); 
 }
 
-void Robot::TestPeriodic() {}
+void Robot::TestPeriodic() {
+  talon_foot->Set(.5);
+  frc::SmartDashboard::PutNumber("Talon voltage", talon_foot->GetBusVoltage()); 
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }

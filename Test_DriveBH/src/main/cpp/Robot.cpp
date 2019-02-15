@@ -4,23 +4,25 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
-#include "ahrs.h"
-#include "Robot.h"
-#include <WPILib.h> 
-#include <iostream>
-#include "ctre/Phoenix.h"
-#include <frc/wpilib.h> 
-#include <frc/smartdashboard/SmartDashboard.h>
-frc::Joystick stick{0}; 
-frc::Solenoid solenoid{0}; 
-frc::Solenoid solenoid2{3}; 
 
-frc::Compressor *c = new frc::Compressor(0); 
+#include "Robot.h"
+#include "ctre/Phoenix.h" 
+#include <iostream>
+#include "rev/CANSparkMax.h"
+#include <frc/drive/DifferentialDrive.h>
+
+#include <frc/smartdashboard/SmartDashboard.h>
+
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 }
+rev::CANSparkMax LeftFront{0, rev::CANSparkMax::MotorType::kBrushless}; 
+rev::CANSparkMax LeftBack{0, rev::CANSparkMax::MotorType::kBrushless}; 
+rev::CANSparkMax RightFront{0, rev::CANSparkMax::MotorType::kBrushless}; 
+rev::CANSparkMax RightBack{0, rev::CANSparkMax::MotorType::kBrushless}; 
+frc::DifferentialDrive drive{LeftFront, RightBack}; 
 
 /**
  * This function is called every robot packet, no matter the mode. Use
@@ -31,7 +33,7 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {}
-//
+
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -45,8 +47,8 @@ void Robot::RobotPeriodic() {}
  */
 void Robot::AutonomousInit() {
   m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString(
-  //     "Auto Selector", kAutoNameDefault);
+  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
+  //     kAutoNameDefault);
   std::cout << "Auto selected: " << m_autoSelected << std::endl;
 
   if (m_autoSelected == kAutoNameCustom) {
@@ -66,25 +68,7 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {
-
-  c->SetClosedLoopControl(true); 
-  if(stick.GetRawButton(1)){ 
-    solenoid.Set(true); 
-  }
-  else if(!stick.GetRawButton(1)){ 
-    solenoid.Set(false); 
-  }
-  if(stick.GetRawButton(3)){ 
-    solenoid2.Set(true); 
-  }
-  else if(!stick.GetRawButton(3)){ 
-    solenoid2.Set(false); 
-  }
-  
-  frc::SmartDashboard::PutBoolean("Compressor Enabled", c->Enabled());
-  frc::SmartDashboard::PutNumber("Compressor Current", c->GetCompressorCurrent()); 
-}
+void Robot::TeleopPeriodic() {}
 
 void Robot::TestPeriodic() {}
 
