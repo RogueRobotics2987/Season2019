@@ -1,5 +1,6 @@
 #ifndef Limelight_h
 #define Limelight_h
+#include "Scalar.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include <networktables/NetworkTable.h>
@@ -11,8 +12,10 @@
 
 class LimelightControl{
    public:
+   neScaler yScalar; 
+   neScaler zScalar; 
    LimelightControl();
- 
+
    std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight-rr");
    double targetOffsetAngle_Horizontal = 0;
    double targetOffsetAngle_Vertical = 0;
@@ -23,7 +26,7 @@ class LimelightControl{
    double curTX= 0;
    double curNumTarget=0;
    double HatchOffset = 0;
-
+  void LimelightInit();
   void visionOn(frc::Joystick* stick);
   void visionMove(frc::DifferentialDrive* drive, frc::Joystick* stick);
 };

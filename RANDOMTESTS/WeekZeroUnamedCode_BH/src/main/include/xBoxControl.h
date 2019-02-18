@@ -17,5 +17,7 @@ class xBoxController{
     void moveWinch(frc::Joystick* xBox, rev::CANSparkMax* winchMotor, rev::CANPIDController* winchPID, PIDControl* winchControlPID, double myTime); 
     void intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMotor);
     void MoveWinchNoStick(rev::CANPIDController* winchPID); 
-};
+    void moveArm(frc::Joystick* xBox, rev::CANPIDController* armPID, PIDControl* armControlPID, rev::CANSparkMax* armMotor, double myTime);
+    void consecArmWinch(frc::Joystick* xBox, rev::CANPIDController* armPID, PIDControl* armControlPID, rev::CANSparkMax* armMotor, rev::CANSparkMax* winchMotor, double myTime);
+    }; 
 #endif xBoxControl_h 

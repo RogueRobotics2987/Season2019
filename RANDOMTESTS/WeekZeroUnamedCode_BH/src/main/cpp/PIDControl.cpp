@@ -33,7 +33,10 @@ else if (TimeCurrent > TimeTotal){
     return 0;
 }
 
-
+}
+void PIDControl::init(double initialPosition, double initTime){ 
+    oldPos = initialPosition; 
+    prevTime = initTime; 
 }
 
 
