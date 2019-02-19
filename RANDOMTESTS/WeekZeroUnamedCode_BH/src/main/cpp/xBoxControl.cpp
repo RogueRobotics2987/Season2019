@@ -1,10 +1,14 @@
 #include "xBoxControl.h" 
 xBoxController::xBoxController(){}
-void xBoxController::setShooter(frc::Joystick* xBox, frc::Solenoid* shooter){ 
-    if(xBox->GetRawButton(3)){ 
-    shooter->Set(true); 
+void xBoxController::setShooter(frc::Joystick* xBox, frc::Solenoid* shooter, frc::Joystick* stick, frc::Timer* myTimer)
+{ 
+      shooterOldTime = myTimer->Get(); 
+    if(xBox->GetRawButton(3) || stick->GetRawButton(1)){ 
+        while(myTimer->Get() - shooterOldTime <= 1){
+            shooter->Set(true); 
+        }
   }
-  else if(!xBox->GetRawButton(4)){ 
+  else if(!xBox->GetRawButton(3) && !stick->GetRawButton(1)){ 
     shooter->Set(false); 
   }
 }
@@ -48,18 +52,14 @@ void xBoxController::intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMoto
   }
     void xBoxController::moveArm(frc::Joystick* xBox, rev::CANPIDController* armPID, PIDControl* armControlPID, rev::CANSparkMax* armMotor, double myTime){
         rev::CANEncoder armEncoder = armMotor->GetEncoder(); 
-        if(armEncoder.GetPosition() > 84.0){ 
-        armPID->SetReference(84, rev::ControlType::kPosition);
+        if(fabs(xBox->GetRawAxis(1)) > .1){
+        armPID->SetReference(armControlPID->getNewPosStick(xBox->GetRawAxis(1) * 80, myTime, 84, 2), rev::ControlType::kPosition); 
         }
-        else if(armEncoder.GetPosition() <0){ 
-            armPID->SetReference(0, rev::ControlType::kPosition); 
+        else { 
+            armPID->SetReference(frc::SmartDashboard::GetNumber("David's arm position", 40), rev::ControlType::kPosition); 
+           // armPID->SetReference(armControlPID->getTargetPos(), rev::ControlType::kPosition); 
         }
-        else{ 
-        armPID->SetReference(armControlPID->getNewPosStick(xBox->GetRawAxis(1) * 14, myTime), rev::ControlType::kPosition); 
-        } 
-          frc::SmartDashboard::PutNumber("Arm Reference", armControlPID->getNewPosStick(xBox->GetRawAxis(1) * 7, myTime));
-
-
+          frc::SmartDashboard::PutNumber("Arm Target Position", armControlPID->getTargetPos()); 
     }
     // 82.1 Up 0 Down 
  void xBoxController::consecArmWinch(frc::Joystick* xBox, rev::CANPIDController* armPID, PIDControl* armControlPID, rev::CANSparkMax* armMotor, rev::CANSparkMax* winchMotor, double myTime){ 

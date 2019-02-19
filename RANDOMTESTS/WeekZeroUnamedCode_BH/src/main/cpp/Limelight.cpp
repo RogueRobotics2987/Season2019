@@ -39,19 +39,21 @@ void LimelightControl::visionOn(frc::Joystick* stick){
    if(stick->GetRawButton(2)){
  frc::SmartDashboard::PutBoolean("VisionProcessor", true);
   table->PutNumber("camMode", 0);
+  table->PutNumber("ledMode", 3);
  // table->PutNumber("stream", 1);
 }
 else {
   table->PutNumber("camMode", 1);
+  table->PutNumber("ledMode", 1);
 // table->PutNumber("stream", 1);
  frc::SmartDashboard::PutBoolean("VisionProcessor", false);
 }
-if(stick->GetRawButton(1)){
- //table->PutNumber("stream", 1);
- table->PutNumber("ledMode", 3);
-}
-else {
- //table->PutNumber("stream", 0);
- table->PutNumber("ledMode", 1);
-}
+// if(stick->GetRawButton(1)){
+//  //table->PutNumber("stream", 1);
+//  table->PutNumber("ledMode", 3);
+// }
+// else {
+//  //table->PutNumber("stream", 0);
+//  table->PutNumber("ledMode", 1);
+// }
 }

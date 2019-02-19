@@ -21,7 +21,7 @@
 #include "Limelight.h"
 #include "Scalar.h" 
 double kP = 0.01, kI = 1e-5, kD = 0, kIz = 1.5, kFF = 0, kMaxOutput = 1, kMinOutput = -1;
-double AkP = 0.15, AkI = 0, AkD = 0, AkIz = 1.5, AkFF = 0;
+double AkP = 8e-4, AkI = 1.2e-6, AkD = 0, AkIz = 5, AkFF = 0; // D could be .0056 
 
 double kMaxVel = 2000, kMinVel = 0, kMaxAcc = 1500, kAllErr = 0;
 // 6 sparks 2 talons 
@@ -70,7 +70,8 @@ PIDControl armControlPID;
 frc::DifferentialDrive drive{LeftFront, RightBack}; 
 
 void Robot::RobotInit() {
-  
+  frc::SmartDashboard::PutNumber("David's arm position", 40); 
+
   myTimer = new frc::Timer(); 
   LeftBackPID.SetP(kP);
   LeftBackPID.SetI(kI);
@@ -105,12 +106,7 @@ void Robot::RobotInit() {
   RightBackPID.SetFF(kFF);
   RightBackPID.SetOutputRange(kMinOutput, kMaxOutput);
 
-  armPID.SetP(AkP);
-  armPID.SetI(AkI);
-  armPID.SetD(AkD);
-  armPID.SetIZone(AkIz);
-  armPID.SetFF(AkFF);
-  armPID.SetOutputRange(kMinOutput, kMaxOutput);
+  
 
 
 
@@ -257,7 +253,12 @@ void Robot::TeleopInit() {
 
   ArmMotor.SetSmartCurrentLimit(20); 
   frc::SmartDashboard::PutNumber("Winch Reference", 0); 
-  
+  armPID.SetP(AkP);
+  armPID.SetI(AkI);
+  armPID.SetD(AkD);
+  armPID.SetIZone(AkIz);
+  armPID.SetFF(AkFF);
+  armPID.SetOutputRange(kMinOutput, kMaxOutput);
     // display PID coefficients on SmartDashboard
     frc::SmartDashboard::PutNumber("P Gain", kP);
     frc::SmartDashboard::PutNumber("I Gain", kI);
@@ -290,7 +291,7 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-
+frc::SmartDashboard::PutNumber("Arm Current", ArmMotor.GetOutputCurrent()); 
   frc::SmartDashboard::PutNumber("Arm Encoder Value", armEncoder.GetPosition()); 
     frc::SmartDashboard::PutNumber("Winch Current", winchChannel.GetOutputCurrent());
 
@@ -335,12 +336,12 @@ void Robot::TeleopPeriodic() {
   if((ff != kFF)) { LeftFrontPID.SetFF(ff); kFF = ff; }
   if((max != kMaxOutput) || (min != kMinOutput)) { LeftFrontPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
 
-   if((Ap != AkP))   { armPID.SetP(Ap); AkP = Ap; }
-  if((Ai != AkI))   { armPID.SetI(Ai); AkI = Ai; }
-  if((Ad != AkD))   { armPID.SetD(Ad); AkD = Ad; }
-  if((Aiz != AkIz)) { armPID.SetIZone(Aiz); AkIz = Aiz; }
-  if((Aff != kFF)) { armPID.SetFF(Aff); AkFF = Aff; }
-  if((max != kMaxOutput) || (min != kMinOutput)) { armPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
+  //  if((Ap != AkP))   { armPID.SetP(Ap); AkP = Ap; }
+  // if((Ai != AkI))   { armPID.SetI(Ai); AkI = Ai; }
+  // if((Ad != AkD))   { armPID.SetD(Ad); AkD = Ad; }
+  // if((Aiz != AkIz)) { armPID.SetIZone(Aiz); AkIz = Aiz; }
+  // if((Aff != kFF)) { armPID.SetFF(Aff); AkFF = Aff; }
+  // if((max != kMaxOutput) || (min != kMinOutput)) { armPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
   
 
   shooterCompressor->SetClosedLoopControl(true); 
@@ -396,7 +397,7 @@ void Robot::TeleopPeriodic() {
 //auxControl.moveWinch(&xBox, &winchChannel, &winchPID, &winchControlPID, myTimer->Get()); 
 //auxControl.MoveWinchNoStick(&winchPID); 
 //auxControl.intakeControl(&xBox, &intake); 
-auxControl.setShooter(&xBox, &shooter); 
+auxControl.setShooter(&xBox, &shooter, &stick, myTimer); 
 //auxControl.moveArm(&xBox, &armPID, &armControlPID, armEncoder, myTimer->Get()); 
 //ArmMotor.Set(xBox.GetRawAxis(1) * .3); 
 LimelightCam.visionOn(&stick); 

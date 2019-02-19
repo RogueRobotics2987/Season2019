@@ -11,9 +11,9 @@ class xBoxController{
     double winchPos =  frc::SmartDashboard::PutNumber("Winch Position", 0); 
 
     double maxSpeed = 36; 
-    
+    double shooterOldTime = 0; 
     xBoxController(); 
-    void setShooter(frc::Joystick* xBox, frc::Solenoid* shooter); 
+    void setShooter(frc::Joystick* xBox, frc::Solenoid* shooter, frc::Joystick* stick, frc::Timer* myTimer); 
     void moveWinch(frc::Joystick* xBox, rev::CANSparkMax* winchMotor, rev::CANPIDController* winchPID, PIDControl* winchControlPID, double myTime); 
     void intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMotor);
     void MoveWinchNoStick(rev::CANPIDController* winchPID); 

@@ -13,10 +13,12 @@ public:
 
     PIDControl();
     double getNewPosStick(double speed, double myTime);
+    double getNewPosStick(double speed, double myTime, double max, double min);
     double getMax(double distance, double acceleration, double totalTime);
     double getVofT(double VelocityMax, double accelerationMax, double TimeTotal, double TimeCurrent);
     double getDistance(double speed);
     void init(double initialPosition, double initTime);
+    double getTargetPos(); 
 
 };
 
