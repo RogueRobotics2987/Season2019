@@ -10,6 +10,22 @@ double PIDControl::getNewPosStick(double speed, double myTime){
     prevTime = curTime; 
     return targetPos; 
 }
+double PIDControl::getNewPosStick2(double speed, double myTime, double max, double min, double curPos){ 
+    
+    double curTime = myTime; 
+    //double dt = curTime - prevTime; 
+    double dt = .02;
+    double targetPos = curPos + speed*dt; 
+    if(targetPos > max){ 
+        targetPos = max; 
+    }
+    else if(targetPos < min){ 
+        targetPos = min; 
+    }
+    oldPos = targetPos; 
+    prevTime = curTime; 
+    return targetPos; 
+}
 double PIDControl::getNewPosStick(double speed, double myTime, double max, double min){ 
     
     double curTime = myTime; 
@@ -27,6 +43,10 @@ double PIDControl::getNewPosStick(double speed, double myTime, double max, doubl
 }
 double PIDControl::getTargetPos(){ 
     return oldPos; 
+}
+
+double PIDControl::setTargetPos(double targetPos){ 
+    oldPos = targetPos; 
 }
 
 double PIDControl::getMax(double distance, double acceleration, double totalTime){

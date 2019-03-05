@@ -34,10 +34,10 @@ void xBoxController::moveWinch(frc::Joystick* xBox, rev::CANSparkMax*
 }
 void xBoxController::intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMotor){ 
     if(xBox->GetRawButton(1)){ 
-    intakeMotor->Set(.3); 
+    intakeMotor->Set(-.3); 
   }
   else if(xBox->GetRawButton(2)){ 
-    intakeMotor->Set(-.3); 
+    intakeMotor->Set(.3); 
   }
   else{ 
       intakeMotor->Set(0.0); 
@@ -51,13 +51,26 @@ void xBoxController::intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMoto
 
   }
     void xBoxController::moveArm(frc::Joystick* xBox, rev::CANPIDController* armPID, PIDControl* armControlPID, rev::CANSparkMax* armMotor, double myTime){
+
         rev::CANEncoder armEncoder = armMotor->GetEncoder(); 
+       
+        
         if(fabs(xBox->GetRawAxis(1)) > .1){
-        armPID->SetReference(armControlPID->getNewPosStick(xBox->GetRawAxis(1) * 80, myTime, 84, 2), rev::ControlType::kPosition); 
+      //  armPID->SetReference(armControlPID->getNewPosStick2(xBox->GetRawAxis(1) * 20, myTime, 90, 2, armEncoder.GetPosition()), rev::ControlType::kSmartMotion); 
+        armPID->SetReference(armControlPID->getNewPosStick(xBox->GetRawAxis(1) * 20, myTime, 90, 2), rev::ControlType::kSmartMotion); 
+
+        }
+       
+        else if(xBox->GetRawButton(5)){ 
+            armControlPID->setTargetPos(2.0); 
+            armPID->SetReference(2, rev::ControlType::kPosition); 
+        }
+        else if(xBox->GetRawButton(6)){
+            armControlPID->setTargetPos(83.0); 
+            armPID->SetReference(83, rev::ControlType::kPosition); 
         }
         else { 
-            armPID->SetReference(frc::SmartDashboard::GetNumber("David's arm position", 40), rev::ControlType::kPosition); 
-           // armPID->SetReference(armControlPID->getTargetPos(), rev::ControlType::kPosition); 
+            armPID->SetReference(armControlPID->getTargetPos(), rev::ControlType::kSmartMotion); 
         }
           frc::SmartDashboard::PutNumber("Arm Target Position", armControlPID->getTargetPos()); 
     }
@@ -67,13 +80,13 @@ void xBoxController::intakeControl(frc::Joystick* xBox, WPI_TalonSRX* intakeMoto
     rev::CANEncoder armEncoder = armMotor->GetEncoder(); 
     rev::CANPIDController winchPID = armMotor->GetPIDController(); 
     
-        if((winchEncoder.GetPosition() > 80.0) && (xBox->GetRawAxis(3) > .1)){ 
+        if((winchEncoder.GetPosition() > 86.0) && (xBox->GetRawAxis(3) > .1)){ 
             
            armPID->SetReference(xBox->GetRawAxis(3), rev::ControlType::kPosition);
            winchMotor->Set(0.14); 
         
         }
-        else if(winchEncoder.GetPosition() > 80 && xBox->GetRawAxis(2) > .1 ) { 
+        else if(winchEncoder.GetPosition() > 86 && xBox->GetRawAxis(2) > .1 ) { 
             armPID->SetReference(-xBox->GetRawAxis(2), rev::ControlType::kPosition);
             winchMotor->Set(0.14); 
         }

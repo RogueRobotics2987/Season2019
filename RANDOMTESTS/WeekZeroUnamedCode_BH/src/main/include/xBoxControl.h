@@ -5,7 +5,7 @@
 #include <ctre/Phoenix.h> 
 #include "PIDControl.h"
 #include <frc/smartdashboard/SmartDashboard.h>
-
+#include "AHRS.h"
 class xBoxController{ 
     public: 
     double winchPos =  frc::SmartDashboard::PutNumber("Winch Position", 0); 

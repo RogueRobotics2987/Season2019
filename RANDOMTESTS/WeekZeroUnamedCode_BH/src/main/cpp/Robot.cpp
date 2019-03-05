@@ -6,14 +6,14 @@
 /*----------------------------------------------------------------------------*/
 #include <frc/drive/DifferentialDrive.h>
 #include "Robot.h"
-#include "AHRS.h" 
+#include "AHRS.h"   //teseted
 #include <iostream>
 #include <frc/smartdashboard/SmartDashboard.h>
-#include "rev/CANSparkMax.h"
+#include "rev/CANSparkMax.h"  //test
 #include <frc/Wpilib.h>
 #include <frc/Timer.h>
 #include "PIDControl.h"
-#include "ctre/Phoenix.h" 
+#include "ctre/Phoenix.h"  //test
 #include "xBoxControl.h" 
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableEntry.h>
@@ -21,9 +21,10 @@
 #include "Limelight.h"
 #include "Scalar.h" 
 double kP = 0.01, kI = 1e-5, kD = 0, kIz = 1.5, kFF = 0, kMaxOutput = 1, kMinOutput = -1;
-double AkP = 8e-4, AkI = 1.2e-6, AkD = 0, AkIz = 5, AkFF = 0; // D could be .0056 
+double AkP = 4e-4, AkI = .8e-6, AkD = 0, AkIz = 5, AkFF = 0; // D could be .0056 
 
 double kMaxVel = 2000, kMinVel = 0, kMaxAcc = 1500, kAllErr = 0;
+double fullMatch = 120; 
 // 6 sparks 2 talons 
 // Volts upward range from .25 to .375 
 // Talon for intake 
@@ -70,7 +71,6 @@ PIDControl armControlPID;
 frc::DifferentialDrive drive{LeftFront, RightBack}; 
 
 void Robot::RobotInit() {
-  frc::SmartDashboard::PutNumber("David's arm position", 40); 
 
   myTimer = new frc::Timer(); 
   LeftBackPID.SetP(kP);
@@ -113,7 +113,6 @@ void Robot::RobotInit() {
   LeftBackPID.SetOutputRange(kMinOutput, kMaxOutput);
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   frc::SmartDashboard::PutNumber("P Gain", kP);
   frc::SmartDashboard::PutNumber("I Gain", kI);
@@ -122,7 +121,7 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutNumber("Feed Forward", kFF);
   frc::SmartDashboard::PutNumber("Max Output", kMaxOutput);
   frc::SmartDashboard::PutNumber("Min Output", kMinOutput);
-  frc::SmartDashboard::PutNumber("Set Rotations", 0);
+  //frc::SmartDashboard::PutNumber("Set Rotations", 0);
 
 }
 double getNewPos(double newCmd){ 
@@ -238,6 +237,9 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() {
   TeleopPeriodic(); 
+  // Code for auto hand movement 
+  // static double oldTime = myTimer->Get(); 
+  // if(myTimer->Get() - oldTime > 5 && myTimer->Get() - oldTime < 7){ my_foot->Set(45);}
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
@@ -246,13 +248,14 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-
+  shooterCompressor->SetClosedLoopControl(true); 
+  armPID.SetSmartMotionMaxVelocity(kMaxVel);
+  armPID.SetSmartMotionMinOutputVelocity(kMinVel); 
+  armPID.SetSmartMotionMaxAccel(kMaxAcc); 
+  armPID.SetSmartMotionAllowedClosedLoopError(kAllErr); 
   LimelightCam.LimelightInit();
-  frc::SmartDashboard::PutNumber("Ramp Rate", 1); 
-      frc::SmartDashboard::PutNumber("SetPoint", 0);
 
   ArmMotor.SetSmartCurrentLimit(20); 
-  frc::SmartDashboard::PutNumber("Winch Reference", 0); 
   armPID.SetP(AkP);
   armPID.SetI(AkI);
   armPID.SetD(AkD);
@@ -295,7 +298,6 @@ frc::SmartDashboard::PutNumber("Arm Current", ArmMotor.GetOutputCurrent());
   frc::SmartDashboard::PutNumber("Arm Encoder Value", armEncoder.GetPosition()); 
     frc::SmartDashboard::PutNumber("Winch Current", winchChannel.GetOutputCurrent());
 
-  double rampRate = frc::SmartDashboard::GetNumber("Ramp Rate", 1); 
   // RightBack.SetRampRate(rampRate); 
   // LeftFront.SetRampRate(rampRate); 
   // LeftFront.SetParameter(rev::CANSparkMaxLowLevel::)
@@ -336,62 +338,53 @@ frc::SmartDashboard::PutNumber("Arm Current", ArmMotor.GetOutputCurrent());
   if((ff != kFF)) { LeftFrontPID.SetFF(ff); kFF = ff; }
   if((max != kMaxOutput) || (min != kMinOutput)) { LeftFrontPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
 
-  //  if((Ap != AkP))   { armPID.SetP(Ap); AkP = Ap; }
-  // if((Ai != AkI))   { armPID.SetI(Ai); AkI = Ai; }
-  // if((Ad != AkD))   { armPID.SetD(Ad); AkD = Ad; }
-  // if((Aiz != AkIz)) { armPID.SetIZone(Aiz); AkIz = Aiz; }
-  // if((Aff != kFF)) { armPID.SetFF(Aff); AkFF = Aff; }
-  // if((max != kMaxOutput) || (min != kMinOutput)) { armPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
+   if((Ap != AkP))   { armPID.SetP(Ap); AkP = Ap; }
+  if((Ai != AkI))   { armPID.SetI(Ai); AkI = Ai; }
+  if((Ad != AkD))   { armPID.SetD(Ad); AkD = Ad; }
+  if((Aiz != AkIz)) { armPID.SetIZone(Aiz); AkIz = Aiz; }
+  if((Aff != kFF)) { armPID.SetFF(Aff); AkFF = Aff; }
+  if((max != kMaxOutput) || (min != kMinOutput)) { armPID.SetOutputRange(min, max); kMinOutput = min; kMaxOutput = max; }
   
 
-  shooterCompressor->SetClosedLoopControl(true); 
   frc::SmartDashboard::PutNumber("Winch encoder position", winchEncoder.GetPosition()); 
   frc::SmartDashboard::PutNumber("Winch Applied Output ", winchChannel.GetAppliedOutput());
-  frc::SmartDashboard::PutNumber("Left Motor Speed Output", getLeftMotor(stick.GetY(), stick.GetZ()));
-  frc::SmartDashboard::PutNumber("Right Motor Speed Output", getRightMotor(stick.GetY(), stick.GetZ()));
+ // frc::SmartDashboard::PutNumber("Left Motor Speed Output", getLeftMotor(stick.GetY(), stick.GetZ()));
+  //frc::SmartDashboard::PutNumber("Right Motor Speed Output", getRightMotor(stick.GetY(), stick.GetZ()));
   double maxSpeed = frc::SmartDashboard::GetNumber("Max Speed", 0); 
   double posLeft = LeftControl.getNewPosStick(stick.GetY()*maxSpeed, myTimer->Get());
   double posRight =  RightControl.getNewPosStick(stick.GetY()*maxSpeed, myTimer->Get()); 
   double posRightTurn =  RightControl.getNewPosStick(getRightMotor(stick.GetY(), stick.GetZ())* maxSpeed, myTimer->Get()); 
   double posLeftTurn = LeftControl.getNewPosStick(getLeftMotor(stick.GetY(), stick.GetZ())* maxSpeed, myTimer->Get());
-  frc::SmartDashboard::PutNumber("WInch Temp", winchChannel.GetMotorTemperature());
-  double targetPitch = -3; 
-  double errorPitch = myAhrs->GetPitch() - targetPitch; 
+  frc::SmartDashboard::PutNumber("Winch Temp", winchChannel.GetMotorTemperature());
   //Right back left front 
   //RightBackPID.SetReference(posRightTurn, rev::ControlType::kPosition); 
- // LeftFrontPID.SetReference(posLeftTurn, rev::ControlType::kPosition); 
-   double rotations = frc::SmartDashboard::GetNumber("Set Rotations", 0);
+  // LeftFrontPID.SetReference(posLeftTurn, rev::ControlType::kPosition); 
+//  double rotations = frc::SmartDashboard::GetNumber("Set Rotations", 0);
   //RightBackPID.SetReference(posRight, rev::ControlType::kPosition); 
-    //RightBackPID.SetReference(rotations, rev::ControlType::kPosition); 
-    //LeftFrontPID.SetReference(rotations, rev::ControlType::kPosition); 
+  //RightBackPID.SetReference(rotations, rev::ControlType::kPosition); 
+  //LeftFrontPID.SetReference(rotations, rev::ControlType::kPosition); 
   //RightBackPID.SetReference(stick.GetY() * 30, rev::ControlType::kPosition); 
- // LeftFrontPID.SetReference(stick.GetY() * 30, rev::ControlType::kPosition); 
+  // LeftFrontPID.SetReference(stick.GetY() * 30, rev::ControlType::kPosition); 
   //LeftFrontPID.SetReference(posLeft, rev::ControlType::kPosition); 
   // talon_foot.Set(.4 * errorPitch); 
-   if(targetPitch*errorPitch > 0){ 
-     //talon_foot.ConfigContinuousCurrentLimit(.2, 20); 
-   }
-  if(targetPitch*errorPitch < 0){ 
-  //  talon_foot.ConfigContinuousCurrentLimit(20, 20);
-  }
+
   //Add directional based current limit 
   // if(errorYaw * errorYaw > 0) then setlimit(2A) else setlimit(20A)
-  
- //frc::SmartDashboard::PutNumber("Talon Current", talon_foot->GetOutputCurrent());
 
- 
-   
-   //talon_foot->Set(ControlMode::PercentOutput, stick.GetY()); 
+  //frc::SmartDashboard::PutNumber("Talon Current", talon_foot->GetOutputCurrent());
+
+
+
+  //talon_foot->Set(ControlMode::PercentOutput, stick.GetY()); 
   //  drive.ArcadeDrive(-stick.GetY(), stick.GetZ()); 
-     
+  double timeRemaining = fullMatch - myTimer->Get(); 
+  frc::SmartDashboard::PutNumber("Time Remaining In Match", timeRemaining); 
  frc::SmartDashboard::PutNumber("RB encoder", RightBackEncoder.GetPosition());
  
 
  frc::SmartDashboard::PutNumber("LF encoder", LeftFrontEncoder.GetPosition()); 
- frc::SmartDashboard::PutNumber("Left Reference Value", posLeft);  
- frc::SmartDashboard::PutNumber("Right Reference Value", posRight);
- frc::SmartDashboard::PutNumber("Gyro Value", myAhrs->GetAngle()); 
- frc::SmartDashboard::PutNumber("Yaw Value", myAhrs->GetYaw()); 
+ //frc::SmartDashboard::PutNumber("Left Reference Value", posLeft);  
+// frc::SmartDashboard::PutNumber("Right Reference Value", posRight);
  frc::SmartDashboard::PutNumber("Pitch Value", myAhrs->GetPitch()); 
  frc::SmartDashboard::PutNumber("Solenoid On", shooter.Get()); 
 //auxControl.moveWinch(&xBox, &winchChannel, &winchPID, &winchControlPID, myTimer->Get()); 
@@ -402,8 +395,6 @@ auxControl.setShooter(&xBox, &shooter, &stick, myTimer);
 //ArmMotor.Set(xBox.GetRawAxis(1) * .3); 
 LimelightCam.visionOn(&stick); 
 LimelightCam.visionMove(&drive, &stick); 
-frc::SmartDashboard::PutNumber("xBox right axis", xBox.GetRawAxis(3)); 
-frc::SmartDashboard::PutNumber("xBox left axis", xBox.GetRawAxis(2)); 
 //ArmMotor.Set(stick.GetY()*0.1); 
 // if(stick.GetRawButton(3)){ 
 //   gearShifts.Set(frc::DoubleSolenoid::Value::kOff); 
@@ -421,17 +412,31 @@ frc::SmartDashboard::PutNumber("xBox left axis", xBox.GetRawAxis(2));
 //   frc::SmartDashboard::PutNumber("POVLoop", 3); 
 //   talon_foot->Set(ControlMode::PercentOutput, -.05);
 // }
-
-if(fabs(xBox.GetRawAxis(5)) > .1){
-talon_foot->Set(ControlMode::PercentOutput, -xBox.GetRawAxis(5));
-} 
-else { 
- talon_foot->Set(ControlMode::PercentOutput, .2);
-
+if(!xBox.GetRawButton(4) && !stick.GetRawButton(4)){
+  if(fabs(stick.GetRawButton(6))){
+  talon_foot->Set(ControlMode::PercentOutput, 1);
+  } 
+  else { 
+  talon_foot->Set(ControlMode::PercentOutput, .2);
+  }
 }
+else if(xBox.GetRawButton(4) || stick.GetRawButton(4)){ 
+  double fkp = 1.4; 
+ double targetPitch = -11; 
+  double pitchError = targetPitch - myAhrs->GetPitch(); 
+  double targetPitchFull = -7; 
+  if(myAhrs->GetPitch() > targetPitchFull){ 
+  talon_foot->Set(ControlMode::PercentOutput, -1); 
 
-frc::SmartDashboard::PutNumber("Talon Output", talon_foot->GetMotorOutputPercent()); 
-frc::SmartDashboard::PutNumber("Xbox Pressed", xBox.GetPOV(0)); 
+  }
+  else{ 
+  talon_foot->Set(ControlMode::PercentOutput, fkp* pitchError); 
+  frc::SmartDashboard::PutNumber("Measured Pitch Output", fkp*pitchError); 
+
+  }
+}
+frc::SmartDashboard::PutNumber("Talon foot output", talon_foot->GetMotorOutputPercent()); 
+frc::SmartDashboard::PutNumber("Measured Pitch", myAhrs->GetPitch()); 
 
 auxControl.intakeControl(&xBox, &intake); 
 auxControl.moveArm(&xBox, &armPID, &armControlPID, &ArmMotor, myTimer->Get()); 

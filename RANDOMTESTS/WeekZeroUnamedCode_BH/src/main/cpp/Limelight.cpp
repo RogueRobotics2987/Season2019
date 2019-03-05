@@ -30,12 +30,17 @@ drive->ArcadeDrive(zScalar.scaleOutput(-1 * stick->GetZ()), yScalar.scaleOutput(
 
 void LimelightControl::LimelightInit(){
   yScalar.init(2.0, 0.7, 0.05);
-  zScalar.init(4.0, 0.5, 0.05);
+  zScalar.init(1.5, 0.5, 0.05);
 
 }
 
 void LimelightControl::visionOn(frc::Joystick* stick){
-  table->PutNumber("stream", 1);
+  if(stick->GetRawButton(3)){ 
+  table->PutNumber("stream", 2);
+  } 
+  else { 
+    table->PutNumber("stream", 1); 
+  }
    if(stick->GetRawButton(2)){
  frc::SmartDashboard::PutBoolean("VisionProcessor", true);
   table->PutNumber("camMode", 0);

@@ -12,6 +12,7 @@ public:
     double prevTime = 0; 
 
     PIDControl();
+    double getNewPosStick2(double speed, double myTime, double max, double min, double curPos); 
     double getNewPosStick(double speed, double myTime);
     double getNewPosStick(double speed, double myTime, double max, double min);
     double getMax(double distance, double acceleration, double totalTime);
@@ -19,6 +20,7 @@ public:
     double getDistance(double speed);
     void init(double initialPosition, double initTime);
     double getTargetPos(); 
+    double setTargetPos(double targetPos);
 
 };
 
